@@ -7,7 +7,10 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
 from models import base_model, amenity, city, place, review, state, user
 
-classes = {
+
+class DBStorage:
+    """handles long term storage of all class instances"""
+    CNC = {
         'BaseModel': base_model.BaseModel,
         'Amenity': amenity.Amenity,
         'City': city.City,
@@ -17,9 +20,6 @@ classes = {
         'User': user.User
     }
 
-class DBStorage:
-    """handles long term storage of all class instances"""
-    
     """ handles storage for database """
     __engine = None
     __session = None
@@ -84,7 +84,7 @@ class DBStorage:
         try:
             obj_dict = {}
             if cls:
-                obj_class = self.__session.query(classes.get(cls)).all()
+                obj_class = self.__session.query(self.CNC.get(cls)).all()
                 for item in obj_class:
                     obj_dict[item.id] = item
             return obj_dict[id]
@@ -103,15 +103,15 @@ class DBStorage:
         """
         obj_dict = {}
         if cls:
-            obj_class = self.__session.query(classes.get(cls)).all()
+            obj_class = self.__session.query(self.CNC.get(cls)).all()
             for item in obj_class:
                 obj_dict[item.id] = item
             return len(obj_dict)
         else:
-            for cls_name in classes:
+            for cls_name in self.CNC:
                 if cls_name == 'BaseModel':
                     continue
-                obj_class = self.__session.query(classes.get(cls_name)).all()
+                obj_class = self.__session.query(self.CNC.get(cls_name)).all()
                 for item in obj_class:
                     obj_dict[item.id] = item
             return len(obj_dict)
