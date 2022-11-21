@@ -19,7 +19,6 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 classes = {"Amenity": Amenity, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
 
-
 class DBStorage:
     """interaacts with the MySQL database"""
     __engine = None
@@ -71,18 +70,44 @@ class DBStorage:
         Session = scoped_session(sess_factory)
         self.__session = Session
 
-    def get(self, cls, id):
-        """retrieve an object in storage"""
-        if cls and id:
-            get_obj = "{}.{}".format(cls, id)
-            all_obj = self.all(cls)
-            return all_obj.get(get_obj)
-        return None
-
-    def count(self, cls):
-        """count number of objects in storagee"""
-        return len(self.all(cls))
-
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
+
+    def get(self, cls, id):
+        """ retrieves one object """
+        try:
+            obj_dict = {}
+            if cls:
+                obj_class = self.__session.query(classes.get(cls)).all()
+                for item in obj_class:
+                    obj_dict[item.id] = item
+            return obj_dict[id]
+        except:
+            return None
+
+    def count(self, cls=None):
+        """Counts number of objects in storage
+
+        Args:
+            cls: optional string representing the class name
+        Returns:
+            the number of objects in storage matching the given class name.
+
+            If no name is passed, returns the count of all objects in storage.
+        """
+        obj_dict = {}
+        if cls:
+            obj_class = self.__session.query(classes.get(cls)).all()
+            for item in obj_class:
+                obj_dict[item.id] = item
+            return len(obj_dict)
+        else:
+            for cls_name in self.CNC:
+                if cls_name == 'BaseModel':
+                    continue
+                obj_class = self.__session.query(
+                    classes.get(cls_name)).all()
+                for item in obj_class:
+                    obj_dict[item.id] = item
+            return len(obj_dict)
