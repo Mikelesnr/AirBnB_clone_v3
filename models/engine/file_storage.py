@@ -9,20 +9,18 @@ from datetime import datetime
 strptime = datetime.strptime
 to_json = base_model.BaseModel.to_json
 
-classes = {
-    'BaseModel': base_model.BaseModel,
-    'Amenity': amenity.Amenity,
-    'City': city.City,
-    'Place': place.Place,
-    'Review': review.Review,
-    'State': state.State,
-    'User': user.User
-}
-
 
 class FileStorage:
     """handles long term storage of all class instances"""
-
+    classes = {
+        'BaseModel': base_model.BaseModel,
+        'Amenity': amenity.Amenity,
+        'City': city.City,
+        'Place': place.Place,
+        'Review': review.Review,
+        'State': state.State,
+        'User': user.User
+    }
     """CNC - this variable is a dictionary with:
     keys: Class Names
     values: Class type (used for instantiation)
@@ -65,12 +63,12 @@ class FileStorage:
             return
         for o_id, d in new_objs.items():
             k_cls = d['__class__']
-            FileStorage.__objects[o_id] = classes[k_cls](**d)
+            FileStorage.__objects[o_id] = FileStorage.CNC[k_cls](**d)
 
     def delete(self, obj=None):
         """ deletes obj from __objects if it's inside """
         try:
-            del self.__objects[obj]
+            del __objects[obj]
         except:
             return
 
@@ -102,7 +100,7 @@ class FileStorage:
             return len(obj_list)
         else:
             obj_list = []
-            for class_name in classes:
+            for class_name in self.CNC:
                 if class_name == 'BaseModel':
                     continue
                 obj_class = FileStorage.__objects
