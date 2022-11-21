@@ -1,19 +1,21 @@
-#!/usr/bin/python3
-"""
-initialize the models package
-"""
+import os
+from models.base_model import BaseModel
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
 
-from os import getenv
+"""CNC - dictionary = { Class Name (string) : Class Type }"""
 
-
-storage_t = getenv("HBNB_TYPE_STORAGE")
-
-if storage_t == "db":
+if os.environ.get('HBNB_TYPE_STORAGE') == 'db':
     from models.engine import db_storage
-    CNC = db_storage.classes
+    CNC = db_storage.DBStorage.CNC
     storage = db_storage.DBStorage()
 else:
     from models.engine import file_storage
-    CNC = file_storage.classes
+    CNC = file_storage.FileStorage.CNC
     storage = file_storage.FileStorage()
+
 storage.reload()

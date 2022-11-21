@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Command interpreter for Alx AirBnB project
+Command interpreter for Holberton AirBnB project
 """
 import os
 import cmd
